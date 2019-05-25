@@ -1,14 +1,27 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import store, { ADD_INGREDIENTS} from "./../../store";
+
 
 class Ingredients extends Component {
   constructor(props) {
     super(props);
+    const reduxState = store.getState();
     this.state = {
-      ingredients: [],
+      ingredients: reduxState.ingredients,
       input: ""
     };
   }
+
+componentDidMount() {
+  store.subscribe(() => {  //allows us to update our page any time the data on redux state changes. will fire anytime there is an update in redux 
+    const reduxState = store.getState(); // anytime this fires we want to use getSTate to get an updated version of the redux state 
+    this.setState({
+      ingredients: reduxState.ingredients //then we use setState to update state for our compnent with the new values 
+    })
+  })
+}
+
   handleChange(val) {
     this.setState({
       input: val
@@ -16,6 +29,10 @@ class Ingredients extends Component {
   }
   addIngredient() {
     // Send data to Redux state
+    store.dispatch({
+      type: ADD_INGREDIENTS,
+      payload: this.state.input 
+    }); 
     this.setState({
       input: ""
     });
